@@ -10,7 +10,11 @@ OUTPUT_FOLDER = 'output1/'
 
 stop_words_en = stop_words.get_stop_words('en')
 stemmer = Stemmer.Stemmer('english')
+global number_of_words_spam
+global number_of_words_ham
 
+number_of_words_spam = 0
+number_of_words_ham = 0
 
 def build_plot(content, file_name):
     i = 0
@@ -37,6 +41,7 @@ def save_to_file(file_name, content):
 
 
 def add_to_dict(dict_element, words_to_add, word_length):
+    global number_of_words_spam
     for word in words_to_add:
         word = word.lower()
         if word in stop_words_en or len(word) < 2:
@@ -58,15 +63,19 @@ def add_to_length_dict(word, length_dict):
 
 
 def read_from_file(ham_dict, spam_dict, word_length_ham, word_length_spam, sentence_length_spam, sentence_length_ham):
+    global number_of_words_spam
+    global number_of_words_ham
     with open("sms-spam-corpus.csv") as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             sentence = stemmer.stemWord(row['v2'])
             words = re.findall('[a-zA-Z]+', sentence)
             if row['v1'] == 'spam':
+                number_of_words_spam += len(words)
                 add_to_length_dict(sentence, sentence_length_spam)
                 add_to_dict(spam_dict, words, word_length_spam)
             elif row['v1'] == 'ham':
+                number_of_words_ham += len(words)
                 add_to_length_dict(sentence, sentence_length_ham)
                 add_to_dict(ham_dict, words, word_length_ham)
     csv_file.close()
@@ -115,6 +124,8 @@ def clear_file(file_name):
 
 
 def main():
+    global number_of_words_spam
+    global number_of_words_ham
     clear_file(OUTPUT_FOLDER + 'sentence_length_mean.txt')
     clear_file(OUTPUT_FOLDER + 'word_length_mean.txt')
     spam_dict = dict()
@@ -125,7 +136,12 @@ def main():
     sentence_length_ham = dict()
 
     read_from_file(ham_dict, spam_dict, word_length_ham, word_length_spam, sentence_length_spam, sentence_length_ham)
-
+    for key, value in word_length_spam.items():
+        num = word_length_spam[key]
+        word_length_spam[key] = num/number_of_words_spam
+    for key, value in word_length_ham.items():
+        num = word_length_ham[key]
+        word_length_ham[key] = num/number_of_words_ham
     spam_dict = sorted(spam_dict.items(), key=operator.itemgetter(1), reverse=True)
     ham_dict = sorted(ham_dict.items(), key=operator.itemgetter(1), reverse=True)
     word_length_spam = sorted(word_length_spam.items(), key=operator.itemgetter(0), reverse=True)
