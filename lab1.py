@@ -16,6 +16,7 @@ global number_of_words_ham
 number_of_words_spam = 0
 number_of_words_ham = 0
 
+
 def build_plot(content, file_name):
     i = 0
     words_list = list()
@@ -138,10 +139,10 @@ def main():
     read_from_file(ham_dict, spam_dict, word_length_ham, word_length_spam, sentence_length_spam, sentence_length_ham)
     for key, value in word_length_spam.items():
         num = word_length_spam[key]
-        word_length_spam[key] = num/number_of_words_spam
+        word_length_spam[key] = num / number_of_words_spam
     for key, value in word_length_ham.items():
         num = word_length_ham[key]
-        word_length_ham[key] = num/number_of_words_ham
+        word_length_ham[key] = num / number_of_words_ham
     spam_dict = sorted(spam_dict.items(), key=operator.itemgetter(1), reverse=True)
     ham_dict = sorted(ham_dict.items(), key=operator.itemgetter(1), reverse=True)
     word_length_spam = sorted(word_length_spam.items(), key=operator.itemgetter(0), reverse=True)
