@@ -27,11 +27,19 @@ class Cluster:
 
 
 def main():
-    file = open('datasets/birch3.txt', 'r')
+    data_paths = ['birch1.txt', 'birch2.txt', 'birch3.txt', 's1.txt']
+    print('chose dataset:')
+    for i in range(len(data_paths)):
+        print(str(i)+'-'+data_paths[i])
+    path_index = int(input())
+    file = open('datasets/'+data_paths[path_index], 'r')
     lines = file.readlines()
+    file.close()
+    print('enter clusters number')
+    clusters_number = int(input())
     points = []
     clusters = []
-    for x in range(5):
+    for x in range(clusters_number):
         cluster = Cluster(randint(0, 10000), randint(0, 10000))
         clusters.append(cluster)
     for line in lines:
@@ -55,17 +63,10 @@ def main():
         for cluster in clusters:
             lengths.append(len(cluster.points))
             cluster.points.clear()
-    for point in clusters[0].points:
-        plt.plot(point.x, point.y, 'o', color='black')
-
-    for point in clusters[1].points:
-        plt.plot(point.x, point.y, 'o', color='red')
-
-    for point in clusters[2].points:
-        plt.plot(point.x, point.y, 'o', color='blue')
-
-    for point in clusters[3].points:
-        plt.plot(point.x, point.y, 'o', color='green')
+    colors = ['black', 'red', 'blue', 'green', 'cyan', 'magenta', 'yellow']
+    for i in range(len(clusters)):
+        for point in clusters[i].points:
+            plt.plot(point.x, point.y, 'o', color=colors[i])
     plt.show()
 
 
